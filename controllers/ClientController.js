@@ -19,11 +19,31 @@ const getClient = (req, res) => {
     });
 }
 const getClients = (req, res) => {
+    console.log('buscando os clientes no banco')
+
     // Get all clients
-    const query = 'SELECT * FROM clients';
+    let query = 'SELECT * FROM clients';
+
+    if (req.query.sortKey && req.query.sortOrder) {
+        const orderKey = req.query.sortKey;
+        const orderValue = req.query.sortOrder;
+        query += ' ORDER BY ' + orderKey + ' ' + orderValue
+    }else{
+        query += ' ORDER BY name asc'        
+    }
+    const page = req.query.page;
+    const limit = req.query.limit;
+    const offset = (page - 1) * limit;
+    query += ' LIMIT ' + limit + ' OFFSET ' + offset
+
+    console.log(query)
+
     db.query(query, (err, result) => {
         if (err) res.status(500);
-        res.json(result);
+        db.query('SELECT COUNT(*) AS total FROM clients', (err, count) => {
+            if (err) res.status(500);
+            res.json({ data: result, total: count[0].total });
+        });
     });
 }
 const updateClient = (req, res) => {
