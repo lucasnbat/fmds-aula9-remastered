@@ -42,7 +42,8 @@ const getClients = (req, res) => {
         if (err) res.status(500);
         db.query('SELECT COUNT(*) AS total FROM clients', (err, count) => {
             if (err) res.status(500);
-            res.json({ data: result, total: count[0].total });
+            // res.json({ data: result, total: count[0].total });
+            res.json({data: result})
         });
     });
 }
