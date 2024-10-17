@@ -37,9 +37,19 @@ const getClient = (req, res) => {
     });
 };
 
-// Obter todos os clientes
+// Obter todos os clientes com suporte para ordenação
+// Obter todos os clientes com suporte para ordenação
 const getClients = (req, res) => {
-    const query = 'SELECT * FROM my_table';
+    const { _sort, _order } = req.query;
+
+    console.log(_sort)
+
+    let query = 'SELECT * FROM my_table';
+
+    // Adicione a cláusula ORDER BY se houver parâmetros de ordenação
+    if (_sort) {
+        query += ` ORDER BY ${_sort} ${_order === 'desc' ? 'DESC' : 'ASC'}`;
+    }
 
     connection.query(query, (err, results) => {
         if (err) {
